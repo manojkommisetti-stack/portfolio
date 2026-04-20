@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manoj Kommisetti — WordPress Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a26;
+    --accent: #6c63ff;
+    --accent2: #00d4aa;
+    --accent3: #ff6b6b;
+    --text: #f0f0f8;
+    --muted: #7a7a9a;
+    --border: rgba(255,255,255,0.07);
+    --card-bg: rgba(255,255,255,0.03);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, background 0.2s ease;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-follower {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(108,99,255,0.5);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.08s ease;
+  }
+  body:has(a:hover) .cursor { transform: translate(-50%, -50%) scale(2); background: var(--accent2); }
+
+  /* Nav */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.5rem 4rem;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(20px);
+    background: rgba(10,10,15,0.8);
+    border-bottom: 1px solid var(--border);
+    animation: slideDown 0.6s ease both;
+  }
+  @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    cursor: none;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 8rem 4rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 800px 600px at 70% 50%, rgba(108,99,255,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 500px 400px at 10% 80%, rgba(0,212,170,0.08) 0%, transparent 60%);
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+  }
+
+  .hero-content { position: relative; max-width: 700px; }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 16px;
+    border: 1px solid rgba(108,99,255,0.3);
+    border-radius: 100px;
+    font-size: 0.8rem;
+    color: var(--accent);
+    margin-bottom: 2rem;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent2);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
+
+  .hero-name {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.8s 0.5s ease both;
+  }
+
+  .hero-name span {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .hero-role {
+    font-size: 1.25rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    animation: fadeUp 0.8s 0.7s ease both;
+  }
+
+  .hero-role em { color: var(--accent2); font-style: normal; }
+
+  .hero-desc {
+    font-size: 1rem;
+    color: var(--muted);
+    max-width: 520px;
+    margin-bottom: 3rem;
+    line-height: 1.8;
+    animation: fadeUp 0.8s 0.9s ease both;
+  }
+
+  .hero-btns {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    animation: fadeUp 0.8s 1.1s ease both;
+  }
+
+  .btn-primary {
+    padding: 14px 32px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: none;
+    transition: all 0.3s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary:hover { background: #7c75ff; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(108,99,255,0.4); }
+
+  .btn-ghost {
+    padding: 14px 32px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: none;
+    transition: all 0.3s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+  /* Floating stats */
+  .hero-stats {
+    position: absolute; right: 4rem; top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 1.5rem;
+    animation: fadeIn 1s 1.3s ease both;
+  }
+
+  .stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    text-align: center;
+    backdrop-filter: blur(20px);
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .stat-card:hover { transform: translateX(-6px); border-color: rgba(108,99,255,0.4); }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    display: block;
+  }
+  .stat-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute; bottom: 2rem; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: var(--muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    animation: fadeIn 1s 1.5s ease both;
+  }
+  .scroll-line {
+    width: 1px; height: 48px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: scrollAnim 1.5s ease-in-out infinite;
+  }
+  @keyframes scrollAnim { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform: scaleY(1); transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* Sections */
+  section { padding: 7rem 4rem; }
+
+  .section-label {
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    height: 1px; width: 40px;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 4rem;
+  }
+
+  /* Skills section */
+  .skills-section { background: var(--surface); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .skill-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(108,99,255,0.08) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .skill-card:hover { transform: translateY(-8px); border-color: rgba(108,99,255,0.4); }
+  .skill-card:hover::before { opacity: 1; }
+
+  .skill-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .skill-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .skill-desc { font-size: 0.85rem; color: var(--muted); }
+
+  .skill-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 1.2rem;
+    overflow: hidden;
+  }
+  .skill-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .skill-card.visible .skill-fill { transform: scaleX(1); }
+
+  /* Experience */
+  .experience-section { position: relative; }
+
+  .timeline {
+    position: relative;
+    padding-left: 3rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 4rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.6s ease;
+  }
+  .timeline-item.visible { opacity: 1; transform: translateX(0); }
+  .timeline-item:nth-child(2) { transition-delay: 0.1s; }
+  .timeline-item:nth-child(3) { transition-delay: 0.2s; }
+  .timeline-item:nth-child(4) { transition-delay: 0.3s; }
+
+  .timeline-dot {
+    position: absolute;
+    left: -3.375rem;
+    top: 0.3rem;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: var(--bg);
+    box-shadow: 0 0 0 4px rgba(108,99,255,0.15);
+  }
+  .timeline-item:first-child .timeline-dot {
+    background: var(--accent);
+    box-shadow: 0 0 20px rgba(108,99,255,0.5);
+    animation: pulse 2s infinite;
+  }
+
+  .timeline-period {
+    font-size: 0.8rem;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+
+  .timeline-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .timeline-company {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .timeline-company::before {
+    content: '';
+    width: 18px; height: 1px;
+    background: var(--muted);
+  }
+
+  .timeline-body {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .timeline-tags {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 1rem;
+  }
+
+  .tag {
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    background: rgba(108,99,255,0.1);
+    border: 1px solid rgba(108,99,255,0.2);
+    color: var(--accent);
+  }
+  .tag.green {
+    background: rgba(0,212,170,0.1);
+    border-color: rgba(0,212,170,0.2);
+    color: var(--accent2);
+  }
+
+  .timeline-highlights { list-style: none; }
+  .timeline-highlights li {
+    color: var(--muted);
+    font-size: 0.9rem;
+    padding: 4px 0;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .timeline-highlights li::before {
+    content: '→';
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* About */
+  .about-section { background: var(--surface); }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .about-visual {
+    position: relative;
+    height: 420px;
+  }
+
+  .about-card-main {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 260px; height: 300px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 24px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 1rem;
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100% { transform: translate(-50%, -50%) rotate(-3deg); } 50% { transform: translate(-50%, -52%) rotate(3deg); } }
+
+  .about-initials {
+    font-family: 'Syne', sans-serif;
+    font-size: 5rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+  }
+  .about-label-card {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.8);
+    text-align: center;
+  }
+
+  .about-badge {
+    position: absolute;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    backdrop-filter: blur(20px);
+    white-space: nowrap;
+  }
+  .about-badge.b1 { top: 10%; right: 5%; animation: floatSm 3s 0.5s ease-in-out infinite; }
+  .about-badge.b2 { bottom: 10%; left: 5%; animation: floatSm 3.5s 1s ease-in-out infinite; }
+  @keyframes floatSm { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+  .badge-val { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+  .badge-lbl { font-size: 0.75rem; color: var(--muted); }
+
+  .about-text p { color: var(--muted); margin-bottom: 1.5rem; line-height: 1.9; }
+
+  .info-list { list-style: none; margin-top: 2rem; }
+  .info-list li {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+  .info-list li span:first-child { color: var(--muted); }
+  .info-list li span:last-child { color: var(--text); font-weight: 500; }
+
+  /* Contact */
+  .contact-section {
+    background: var(--bg);
+    text-align: center;
+  }
+
+  .contact-inner {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .contact-inner p { color: var(--muted); margin-bottom: 3rem; font-size: 1.05rem; line-height: 1.9; }
+
+  .contact-links {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 4rem;
+  }
+
+  .contact-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 28px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    cursor: none;
+  }
+  .contact-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-3px);
+    background: rgba(108,99,255,0.05);
+  }
+
+  .cert-badge {
+    display: inline-flex;
+    align-items: center; gap: 12px;
+    padding: 1.25rem 2rem;
+    background: linear-gradient(135deg, rgba(108,99,255,0.1), rgba(0,212,170,0.1));
+    border: 1px solid rgba(108,99,255,0.2);
+    border-radius: 16px;
+    margin-bottom: 4rem;
+  }
+  .cert-icon { font-size: 2rem; }
+  .cert-text { text-align: left; }
+  .cert-title { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 0.95rem; }
+  .cert-sub { font-size: 0.8rem; color: var(--muted); }
+
+  /* Footer */
+  footer {
+    padding: 2rem 4rem;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  /* Animate on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Marquee */
+  .marquee-wrap {
+    overflow: hidden;
+    padding: 2rem 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 3rem;
+    animation: marquee 20s linear infinite;
+    width: max-content;
+  }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .marquee-item {
+    display: flex; align-items: center; gap: 12px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .marquee-item span { color: var(--accent); font-size: 1.2rem; }
+
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 2rem; }
+    .hero { padding: 7rem 2rem 4rem; }
+    .hero-stats { display: none; }
+    section { padding: 5rem 2rem; }
+    .about-grid { grid-template-columns: 1fr; }
+    .about-visual { display: none; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follower" id="follower"></div>
+
+<nav>
+  <div class="nav-logo">MK</div>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-content">
+    <div class="hero-tag">Available for opportunities</div>
+    <h1 class="hero-name">Manoj<br><span>Kommisetti</span></h1>
+    <p class="hero-role">WordPress Developer · <em>5+ Years</em> of Building for the Web</p>
+    <p class="hero-desc">
+      Crafting performant, beautifully responsive WordPress websites that blend great design with clean code — from custom themes and plugins to full-stack CMS solutions.
+    </p>
+    <div class="hero-btns">
+      <a href="#experience" class="btn-primary">View My Work ↓</a>
+      <a href="#contact" class="btn-ghost">Get in Touch</a>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat-card">
+      <span class="stat-num">5+</span>
+      <span class="stat-label">Years Experience</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">4</span>
+      <span class="stat-label">Companies</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">🏆</span>
+      <span class="stat-label">Hackathon Runner-up</span>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="marquee-item"><span>◆</span> WordPress</div>
+    <div class="marquee-item"><span>◆</span> PHP</div>
+    <div class="marquee-item"><span>◆</span> Elementor</div>
+    <div class="marquee-item"><span>◆</span> WooCommerce</div>
+    <div class="marquee-item"><span>◆</span> HTML5 / CSS3</div>
+    <div class="marquee-item"><span>◆</span> JavaScript</div>
+    <div class="marquee-item"><span>◆</span> Divi Builder</div>
+    <div class="marquee-item"><span>◆</span> SEO</div>
+    <div class="marquee-item"><span>◆</span> Responsive Design</div>
+    <div class="marquee-item"><span>◆</span> HubSpot</div>
+    <div class="marquee-item"><span>◆</span> JIRA</div>
+    <!-- duplicate for seamless loop -->
+    <div class="marquee-item"><span>◆</span> WordPress</div>
+    <div class="marquee-item"><span>◆</span> PHP</div>
+    <div class="marquee-item"><span>◆</span> Elementor</div>
+    <div class="marquee-item"><span>◆</span> WooCommerce</div>
+    <div class="marquee-item"><span>◆</span> HTML5 / CSS3</div>
+    <div class="marquee-item"><span>◆</span> JavaScript</div>
+    <div class="marquee-item"><span>◆</span> Divi Builder</div>
+    <div class="marquee-item"><span>◆</span> SEO</div>
+    <div class="marquee-item"><span>◆</span> Responsive Design</div>
+    <div class="marquee-item"><span>◆</span> HubSpot</div>
+    <div class="marquee-item"><span>◆</span> JIRA</div>
+  </div>
+</div>
+
+<!-- SKILLS -->
+<section class="skills-section" id="skills">
+  <div class="section-label">What I Do</div>
+  <h2 class="section-title reveal">Core Skills &amp;<br>Expertise</h2>
+
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <span class="skill-icon">⚡</span>
+      <div class="skill-name">WordPress Development</div>
+      <div class="skill-desc">Custom themes, plugins, post types, taxonomies — built clean and fast.</div>
+      <div class="skill-bar"><div class="skill-fill" style="--w: 0.97"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">🎨</span>
+      <div class="skill-name">Theme Builders</div>
+      <div class="skill-desc">Expert in Elementor, Divi, WP Bakery — pixel-perfect layouts.</div>
+      <div class="skill-bar"><div class="skill-fill" style="--w: 0.95"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">📱</span>
+      <div class="skill-name">Responsive Design</div>
+      <div class="skill-desc">Mobile-first CSS, consistent UX across all screen sizes and browsers.</div>
+      <div class="skill-bar"><div class="skill-fill" style="--w: 0.93"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">🛒</span>
+      <div class="skill-name">WooCommerce</div>
+      <div class="skill-desc">Full e-commerce setups including payment gateways and Shiprocket.</div>
+      <div class="skill-bar"><div class="skill-fill" style="--w: 0.88"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">🔍</span>
+      <div class="skill-name">SEO &amp; Performance</div>
+      <div class="skill-desc">Technical SEO implementation, page speed, uptime monitoring.</div>
+      <div class="skill-bar"><div class="skill-fill" style="--w: 0.90"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">🔐</span>
+      <div class="skill-name">Security &amp; Maintenance</div>
+      <div class="skill-desc">2FA, plugin updates, security hardening, user role management.</div>
+      <div class="skill-bar"><div class="skill-fill" style="--w: 0.85"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">💻</span>
+      <div class="skill-name">Frontend Code</div>
+      <div class="skill-desc">HTML5, CSS3, PHP, JavaScript — hand-coded and readable.</div>
+      <div class="skill-bar"><div class="skill-fill" style="--w: 0.87"></div></div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">🤝</span>
+      <div class="skill-name">Collaboration</div>
+      <div class="skill-desc">JIRA, close work with designers and marketing teams.</div>
+      <div class="skill-bar"><div class="skill-fill" style="--w: 0.92"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="experience-section" id="experience">
+  <div class="section-label">Career Path</div>
+  <h2 class="section-title reveal">Work<br>Experience</h2>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-period">Feb 2024 — Present</div>
+      <div class="timeline-title">WordPress Developer</div>
+      <div class="timeline-company">Estuate · Bangalore</div>
+      <div class="timeline-body">
+        <ul class="timeline-highlights">
+          <li>Manages and maintains the company's entire web presence, collaborating closely with marketing and design.</li>
+          <li>Upgraded Divi theme from v2.3.6 to v4.27.2 — a major version jump with zero downtime.</li>
+          <li>Built custom post types, taxonomies, shortcodes, and widgets for bespoke functionality.</li>
+          <li>Monitors page load speed, uptime, and server resources to keep performance optimal.</li>
+          <li>Implemented two-factor authentication and advanced user account management.</li>
+        </ul>
+        <div class="timeline-tags">
+          <span class="tag">Divi 4.x</span>
+          <span class="tag">SEO</span>
+          <span class="tag">2FA Security</span>
+          <span class="tag green">Current Role</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-period">Apr 2023 — Nov 2023</div>
+      <div class="timeline-title">WordPress Developer</div>
+      <div class="timeline-company">Near Intelligence Pvt Ltd · Bangalore</div>
+      <div class="timeline-body">
+        <ul class="timeline-highlights">
+          <li>Developed custom WordPress themes from scratch using HTML5, CSS3, JavaScript and PHP.</li>
+          <li>Performed troubleshooting and debugging on production sites to resolve issues quickly.</li>
+          <li>Maintained cross-browser compatibility across all major browsers.</li>
+          <li>Won Runner-up at the company's internal Generative AI Hackathon — led UI/UX design.</li>
+        </ul>
+        <div class="timeline-tags">
+          <span class="tag">Custom Themes</span>
+          <span class="tag">PHP</span>
+          <span class="tag">Debugging</span>
+          <span class="tag">🏆 AI Hackathon</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-period">Oct 2021 — Mar 2023</div>
+      <div class="timeline-title">WordPress Developer</div>
+      <div class="timeline-company">Rorko India Pvt Ltd · Bangalore</div>
+      <div class="timeline-body">
+        <ul class="timeline-highlights">
+          <li>Utilized Elementor, WP Bakery, and Divi to craft visually rich, highly functional websites.</li>
+          <li>Delivered WooCommerce stores with full payment gateway and Shiprocket integrations.</li>
+          <li>Managed WordPress Multisite networks for complex client portfolios.</li>
+          <li>Collaborated with SEO professionals to drive measurable gains in organic search rankings.</li>
+        </ul>
+        <div class="timeline-tags">
+          <span class="tag">WooCommerce</span>
+          <span class="tag">Elementor</span>
+          <span class="tag">Multisite</span>
+          <span class="tag">Shiprocket</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-period">May 2019 — Sep 2021</div>
+      <div class="timeline-title">Junior WordPress Designer</div>
+      <div class="timeline-company">Nice Interactive · Rajahmundry, AP</div>
+      <div class="timeline-body">
+        <ul class="timeline-highlights">
+          <li>Designed user interfaces based on client briefs and customized child themes.</li>
+          <li>Migrated content from legacy systems into new WordPress installations.</li>
+          <li>Developed and documented style guidelines for website content.</li>
+          <li>Optimized WordPress databases for improved performance.</li>
+        </ul>
+        <div class="timeline-tags">
+          <span class="tag">UI Design</span>
+          <span class="tag">Child Themes</span>
+          <span class="tag">DB Optimization</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="about-grid">
+    <div class="about-visual">
+      <div class="about-card-main">
+        <div class="about-initials">MK</div>
+        <div class="about-label-card">WordPress Developer<br>Bangalore, India</div>
+      </div>
+      <div class="about-badge b1">
+        <div class="badge-val">B.Sc.</div>
+        <div class="badge-lbl">Computer Science</div>
+      </div>
+      <div class="about-badge b2">
+        <div class="badge-val">EN + TE</div>
+        <div class="badge-lbl">Languages</div>
+      </div>
+    </div>
+    <div class="about-text">
+      <div class="section-label">About Me</div>
+      <h2 class="section-title" style="margin-bottom: 1.5rem;">Building the Web<br>One Site at a Time</h2>
+      <p>
+        I'm a WordPress developer with over 5 years of experience designing, building, and maintaining websites that look great and perform even better. I've worked across agencies and product companies, giving me a versatile skill set.
+      </p>
+      <p>
+        With a sharp eye for detail and a genuine passion for clean code, I specialize in custom theme development, WooCommerce solutions, and performance optimization — always keeping the end-user experience at the center.
+      </p>
+      <ul class="info-list">
+        <li><span>📍 Location</span><span>Bangalore, India</span></li>
+        <li><span>📧 Email</span><span>manoj.kommisetti16@gmail.com</span></li>
+        <li><span>📱 Phone</span><span>+91 9533275213</span></li>
+        <li><span>🎓 Education</span><span>B.Sc. — Aadikavi Nannaya University</span></li>
+        <li><span>🗣 Languages</span><span>English, Telugu</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="contact-inner">
+    <div class="section-label" style="justify-content: center;">Contact</div>
+    <h2 class="section-title reveal">Let's Build<br>Something Great</h2>
+
+    <div class="cert-badge reveal">
+      <div class="cert-icon">🏆</div>
+      <div class="cert-text">
+        <div class="cert-title">Generative AI Hackathon — Runner-up</div>
+        <div class="cert-sub">Near Intelligence · Led product UI/UX design for AI-powered tools</div>
+      </div>
+    </div>
+
+    <p class="reveal">
+      I'm always open to interesting projects, full-time opportunities, and collaborations. If you need a reliable WordPress developer who cares about quality, let's talk.
+    </p>
+
+    <div class="contact-links reveal">
+      <a href="mailto:manoj.kommisetti16@gmail.com" class="contact-link">
+        ✉ manoj.kommisetti16@gmail.com
+      </a>
+      <a href="tel:+919533275213" class="contact-link">
+        📱 +91 9533275213
+      </a>
+    </div>
+
+    <a href="#home" class="btn-primary" style="cursor: none;">Back to Top ↑</a>
+  </div>
+</section>
+
+<footer>
+  <span>Manoj Kommisetti — WordPress Developer</span>
+  <span>Bangalore, India · 2024</span>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const follower = document.getElementById('follower');
+  let mx = 0, my = 0, fx = 0, fy = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animFollower() {
+    fx += (mx - fx) * 0.12;
+    fy += (my - fy) * 0.12;
+    follower.style.left = fx + 'px';
+    follower.style.top = fy + 'px';
+    requestAnimationFrame(animFollower);
+  }
+  animFollower();
+
+  // Intersection observer for animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal, .skill-card, .timeline-item').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
